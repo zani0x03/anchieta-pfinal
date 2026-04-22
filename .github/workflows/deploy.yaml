@@ -1,0 +1,25 @@
+name: Build and Push API
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  REGISTRY_URL: ${{ vars.NEXUS_URL }}
+  REGISTRY_USER: ${{ vars.NEXUS_USER }}
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build and Push Docker Image
+        run: |
+          cd api-projects/anchieta-pfinal-login
+          
+          docker build -t ${{ env.REGISTRY_URL }}/api-login:latest .
+          
+          echo "${{ secrets.NEXUS_PASSWORD }}" | docker login ${{ env.REGISTRY_URL }} -u ${{ env.REGISTRY_USER }} --password-stdin
+          
+          docker push ${{ env.REGISTRY_URL }}/api-login:latest
