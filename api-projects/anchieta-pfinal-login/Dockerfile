@@ -1,35 +1,24 @@
-# Use an official OpenJDK runtime as a parent image
-FROM eclipse-temurin:17-jdk AS builder
-
-# Set the working directory in the container
+# Usa uma imagem do Maven com Java para buildar
+FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy the Maven wrapper and pom.xml
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+# Copia o pom e baixa as dependências (otimiza o cache)
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Download dependencies. This is separate from copying the code to leverage Docker cache.
-RUN ./mvnw dependency:go-offline
-
-# Copy the source code
+# Copia o código fonte e builda
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Package the application
-RUN ./mvnw package -DskipTests
-
-# Use a slim base image for the final stage
-FROM eclipse-temurin:17-jdk AS final_stage
-# Explicitly naming the final stage
-
-# Set the working directory in the container
+# Imagem final, muito mais leve
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copy the built JAR file from the builder stage
-COPY --from=builder /app/target/*.jar app.jar
+# Copia apenas o jar gerado no build
+COPY --from=build /app/target/*.jar app.jar
 
-# Expose the application port
+# Expõe a porta que sua API usa
 EXPOSE 8085
 
-# Run the application
-# The application will read configurations from environment variables
+# Comando para rodar a aplicação
 ENTRYPOINT ["java", "-jar", "app.jar"]
