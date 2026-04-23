@@ -4,22 +4,25 @@ on:
   push:
     branches: [ main ]
 
-env:
-  REGISTRY_URL: ${{ vars.NEXUS_URL }}
-  REGISTRY_USER: ${{ vars.NEXUS_USER }}
-
 jobs:
   build:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Build and Push Docker Image
+      - name: Log in to Nexus Docker Registry
+        run: |
+          echo "${{ secrets.NEXUS_PASSWORD }}" | docker login ${{ vars.NEXUS_URL }} -u ${{ vars.NEXUS_USER }} --password-stdin
+
+      - name: Build and Tag Docker Image
         run: |
           cd api-projects/anchieta-pfinal-login
-          
-          docker build -t ${{ env.REGISTRY_URL }}/api-login:latest .
-          
-          echo "${{ secrets.NEXUS_PASSWORD }}" | docker login ${{ env.REGISTRY_URL }} -u ${{ env.REGISTRY_USER }} --password-stdin
-          
-          docker push ${{ env.REGISTRY_URL }}/api-login:latest
+          # Usamos o NEXUS_URL da variável de ambiente do GitHub
+          docker build -t ${{ vars.NEXUS_URL }}/anchieta-pfinal-repository/api-login:latest .
+          docker tag ${{ vars.NEXUS_URL }}/anchieta-pfinal-repository/api-login:latest ${{ vars.NEXUS_URL }}/anchieta-pfinal-repository/api-login:${{ github.sha }}
+
+      - name: Push Image to Nexus
+        run: |
+          docker push ${{ vars.NEXUS_URL }}/anchieta-pfinal-repository/api-login:latest
+          docker push ${{ vars.NEXUS_URL }}/anchieta-pfinal-repository/api-login:${{ github.sha }}
