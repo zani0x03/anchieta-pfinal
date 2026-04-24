@@ -1,9 +1,4 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: apps-anchieta-mobile-ios
----
-apiVersion: v1
 kind: Service
 metadata:
   name: login-api
@@ -11,9 +6,9 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 8085
-      targetPort: 8085
-      nodePort: 30085
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
   selector:
     app: login-api
 ---
@@ -37,37 +32,23 @@ spec:
       containers:
         - name: login-api
           image: 192.168.1.33:5000/anchieta-mobile-ios-repository/api-login:latest
-
           env:
             - name: SPRING_DATASOURCE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: login-api-secrets
-                  key: db-url
+              valueFrom: { secretKeyRef: { name: login-api-secrets, key: db-url } }
             - name: SPRING_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: login-api-secrets
-                  key: db-user
+              valueFrom: { secretKeyRef: { name: login-api-secrets, key: db-user } }
             - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: login-api-secrets
-                  key: db-pass
-            - name: KEYCLOAK_URL
+              valueFrom: { secretKeyRef: { name: login-api-secrets, key: db-pass } }
+            - name: KEYCLOAK_SERVER_URL
               value: "http://keycloak.infra.svc.cluster.local:8080"
             - name: KEYCLOAK_REALM
               value: "anchieta-mobile-ios-realm"
             - name: KEYCLOAK_CLIENT_ID
-
               value: "registration-api-client"
             - name: KEYCLOAK_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: login-api-secrets
-                  key: keycloak-client-secret
+              valueFrom: { secretKeyRef: { name: login-api-secrets, key: keycloak-client-secret } }
           ports:
-            - containerPort: 8085
+            - containerPort: 8080
           resources:
             limits:
               memory: "512Mi"
