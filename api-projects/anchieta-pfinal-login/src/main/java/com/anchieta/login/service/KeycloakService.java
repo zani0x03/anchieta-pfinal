@@ -38,6 +38,22 @@ public class KeycloakService {
                 .build();
     }
 
+    public boolean validateUserSistema(String username, String sistemaId) {
+        Keycloak keycloak = getKeycloakInstance();
+        List<UserRepresentation> users = keycloak.realm(realm).users().search(username);
+        
+        if (users.isEmpty()) return false;
+        
+        UserRepresentation user = users.get(0);
+        Map<String, List<String>> attributes = user.getAttributes();
+        
+        if (attributes != null && attributes.containsKey("sistema_id")) {
+            return attributes.get("sistema_id").contains(sistemaId);
+        }
+        
+        return false;
+    }
+
     public String createUser(String username, String email, String firstName, String lastName, String password, String sistemaId) {
         Keycloak keycloak = getKeycloakInstance();
         
