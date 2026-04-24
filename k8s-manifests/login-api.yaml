@@ -36,7 +36,7 @@ spec:
         - name: nexus-pull-secret
       containers:
         - name: login-api
-          image: 127.0.0.1:5000/anchieta-mobile-ios-repository/api-login:latest
+          image: 192.168.1.33:5000/anchieta-mobile-ios-repository/api-login:latest
 
           env:
             - name: SPRING_DATASOURCE_URL
