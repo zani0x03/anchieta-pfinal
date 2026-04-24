@@ -1,4 +1,9 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: apps-anchieta-mobile-ios
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: login-api
@@ -32,6 +37,7 @@ spec:
       containers:
         - name: login-api
           image: 192.168.1.33:5000/anchieta-mobile-ios-repository/api-login:latest
+
           env:
             - name: SPRING_DATASOURCE_URL
               valueFrom:
@@ -48,11 +54,12 @@ spec:
                 secretKeyRef:
                   name: login-api-secrets
                   key: db-pass
-            - name: KEYCLOAK_SERVER_URL
+            - name: KEYCLOAK_URL
               value: "http://keycloak.infra.svc.cluster.local:8080"
             - name: KEYCLOAK_REALM
               value: "anchieta-mobile-ios-realm"
             - name: KEYCLOAK_CLIENT_ID
+
               value: "registration-api-client"
             - name: KEYCLOAK_CLIENT_SECRET
               valueFrom:
