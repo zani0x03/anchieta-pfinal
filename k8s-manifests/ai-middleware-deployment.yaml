@@ -21,6 +21,8 @@ spec:
           ports:
             - containerPort: 8086
           env:
+            - name: SERVER_PORT
+              value: "8086"
             - name: OLLAMA_URL
               value: "http://ollama.apps-anchieta-mobile-ios.svc.cluster.local:11434/api/generate"
             - name: OLLAMA_MODEL
