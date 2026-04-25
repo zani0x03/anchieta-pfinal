@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: anchieta-mobile-ios-ai.local
+    - host: anchieta-mobile-ios-ia.local
       http:
         paths:
           - path: /
