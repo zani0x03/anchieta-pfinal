@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-middleware
+  namespace: apps-anchieta-mobile-ios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-middleware
+  template:
+    metadata:
+      labels:
+        app: ai-middleware
+    spec:
+      imagePullSecrets:
+        - name: nexus-pull-secret
+      containers:
+        - name: ai-middleware
+          image: 192.168.1.33:5000/anchieta-mobile-ios-repository/api-ai:latest
+          ports:
+            - containerPort: 8086
+          env:
+            - name: OLLAMA_URL
+              value: "http://ollama.apps-anchieta-mobile-ios.svc.cluster.local:11434/api/generate"
+            - name: OLLAMA_MODEL
+              value: "qwen3:0.6b" # Troque aqui para qwen:1.8b quando quiser mais inteligência
+            - name: KEYCLOAK_URL
+              value: "http://keycloak.infra.svc.cluster.local:8080/realms/anchieta-mobile-ios-realm/protocol/openid-connect/certs"
+          resources:
+            limits:
+              memory: "512Mi"
+            requests:
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-middleware
+  namespace: apps-anchieta-mobile-ios
+spec:
+  ports:
+    - port: 8086
+      targetPort: 8086
+  selector:
+    app: ai-middleware
