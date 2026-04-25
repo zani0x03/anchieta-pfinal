@@ -15,14 +15,21 @@ jobs:
         run: |
           echo "${{ secrets.NEXUS_PASSWORD }}" | docker login ${{ vars.NEXUS_URL }} -u ${{ vars.NEXUS_USER }} --password-stdin
 
-      - name: Build and Tag Docker Image
+      - name: Build and Tag Docker Image (Login API)
         run: |
           cd api-projects/anchieta-pfinal-login
-          # Usamos o novo nome do repositório: anchieta-mobile-ios-repository
           docker build -t ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest .
           docker tag ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:${{ github.sha }}
 
-      - name: Push Image to Nexus
+      - name: Build and Tag Docker Image (AI API)
+        run: |
+          cd api-projects/anchieta-pfinal-ai
+          docker build -t ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest .
+          docker tag ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:${{ github.sha }}
+
+      - name: Push Images to Nexus
         run: |
           docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest
           docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:${{ github.sha }}
+          docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest
+          docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:${{ github.sha }}
