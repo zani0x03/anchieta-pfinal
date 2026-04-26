@@ -18,22 +18,24 @@ jobs:
       - name: Build and Tag Docker Image (Login API)
         run: |
           cd api-projects/anchieta-pfinal-login
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          # Extrai a versão usando um container temporário do Maven
+          VERSION=$(docker run --rm -v "$(pwd)":/app -w /app maven:3.9-eclipse-temurin-17-alpine mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           docker build -t ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest .
           docker tag ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:$VERSION
 
       - name: Build and Tag Docker Image (AI API)
         run: |
           cd api-projects/anchieta-pfinal-ai
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          # Extrai a versão usando um container temporário do Maven
+          VERSION=$(docker run --rm -v "$(pwd)":/app -w /app maven:3.9-eclipse-temurin-17-alpine mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           docker build -t ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest .
           docker tag ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:$VERSION
 
       - name: Push Images to Nexus
         run: |
-          # Pegando as versões novamente para o push
-          VERSION_LOGIN=$(mvn -f api-projects/anchieta-pfinal-login/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
-          VERSION_AI=$(mvn -f api-projects/anchieta-pfinal-ai/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
+          # Pegando as versões novamente usando Docker para o push
+          VERSION_LOGIN=$(docker run --rm -v "$(pwd)/api-projects/anchieta-pfinal-login":/app -w /app maven:3.9-eclipse-temurin-17-alpine mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          VERSION_AI=$(docker run --rm -v "$(pwd)/api-projects/anchieta-pfinal-ai":/app -w /app maven:3.9-eclipse-temurin-17-alpine mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           
           docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest
           docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:$VERSION_LOGIN
