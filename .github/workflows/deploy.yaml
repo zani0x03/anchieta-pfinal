@@ -18,18 +18,24 @@ jobs:
       - name: Build and Tag Docker Image (Login API)
         run: |
           cd api-projects/anchieta-pfinal-login
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           docker build -t ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest .
-          docker tag ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:${{ github.sha }}
+          docker tag ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:$VERSION
 
       - name: Build and Tag Docker Image (AI API)
         run: |
           cd api-projects/anchieta-pfinal-ai
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           docker build -t ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest .
-          docker tag ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:${{ github.sha }}
+          docker tag ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:$VERSION
 
       - name: Push Images to Nexus
         run: |
+          # Pegando as versões novamente para o push
+          VERSION_LOGIN=$(mvn -f api-projects/anchieta-pfinal-login/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
+          VERSION_AI=$(mvn -f api-projects/anchieta-pfinal-ai/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
+          
           docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:latest
-          docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:${{ github.sha }}
+          docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-login:$VERSION_LOGIN
           docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:latest
-          docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:${{ github.sha }}
+          docker push ${{ vars.NEXUS_URL }}/anchieta-mobile-ios-repository/api-ai:$VERSION_AI
