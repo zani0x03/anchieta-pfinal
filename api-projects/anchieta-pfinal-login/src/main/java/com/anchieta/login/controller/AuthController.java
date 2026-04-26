@@ -30,7 +30,21 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
         String password = credentials.get("password");
+        
+        // Tenta pegar sistemaId ou sistema_id
         String sistemaId = credentials.get("sistemaId");
+        if (sistemaId == null) {
+            sistemaId = credentials.get("sistema_id");
+        }
+
+        if (sistemaId == null || username == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username and sistemaId are required.");
+        }
+
+        String compositeUsername = sistemaId + "_" + username;
+        
+        System.out.println("Tentando login com Client: " + clientId);
+        System.out.println("Username Final: " + compositeUsername);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -39,7 +53,7 @@ public class AuthController {
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "password");
         map.add("client_id", clientId);
-        map.add("username", username);
+        map.add("username", compositeUsername);
         map.add("password", password);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
@@ -48,7 +62,7 @@ public class AuthController {
             ResponseEntity<Map> response = restTemplate.postForEntity(keycloakUrl, request, Map.class);
 
             // Validate system association
-            if (!keycloakService.validateUserSistema(username, sistemaId)) {
+            if (!keycloakService.validateUserSistema(compositeUsername, sistemaId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado para este sistema.");
             }
 

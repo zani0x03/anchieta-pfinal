@@ -28,8 +28,10 @@ public class RegistrationController {
 
         try {
             // 3.3.2 & 3.3.3 Create user and update attributes
+            String compositeUsername = request.getSistemaId() + "_" + request.getLogin();
+            
             String userId = keycloakService.createUser(
-                    request.getLogin(),
+                    compositeUsername,
                     request.getEmail(),
                     request.getName(),
                     request.getSurname(),

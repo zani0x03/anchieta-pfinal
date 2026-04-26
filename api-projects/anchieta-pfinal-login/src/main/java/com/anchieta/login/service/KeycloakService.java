@@ -40,7 +40,7 @@ public class KeycloakService {
 
     public boolean validateUserSistema(String username, String sistemaId) {
         Keycloak keycloak = getKeycloakInstance();
-        List<UserRepresentation> users = keycloak.realm(realm).users().search(username);
+        List<UserRepresentation> users = keycloak.realm(realm).users().search(username, true);
         
         if (users.isEmpty()) return false;
         
