@@ -31,6 +31,7 @@ spec:
       containers:
         - name: login-api
           image: 192.168.1.33:5000/anchieta-mobile-ios-repository/api-login:latest
+          imagePullPolicy: Always
           env:
             - name: SPRING_DATASOURCE_URL
               valueFrom: { secretKeyRef: { name: login-api-secrets, key: db-url } }
