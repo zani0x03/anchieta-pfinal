@@ -10,6 +10,8 @@ spec:
       app: ai-middleware
   template:
     metadata:
+      annotations:
+        rollout-date: "@REPLACE_DATE@"
       labels:
         app: ai-middleware
     spec:

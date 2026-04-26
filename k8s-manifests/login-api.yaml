@@ -23,6 +23,8 @@ spec:
       app: login-api
   template:
     metadata:
+      annotations:
+        rollout-date: "@REPLACE_DATE@"
       labels:
         app: login-api
     spec:
