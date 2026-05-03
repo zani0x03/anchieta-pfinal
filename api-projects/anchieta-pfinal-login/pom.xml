@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.anchieta</groupId>
 	<artifactId>anchieta-pfinal-login</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.2</version>
 	<name>login-api</name>
 	<description>Login API for student authentication</description>
 	<properties>

@@ -5,6 +5,7 @@ metadata:
   namespace: apps-anchieta-mobile-ios
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
