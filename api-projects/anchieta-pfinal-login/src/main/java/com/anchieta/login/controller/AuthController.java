@@ -5,6 +5,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
+import com.anchieta.login.dto.LoginRequest;
+
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Map;
@@ -27,15 +30,10 @@ public class AuthController {
     private String clientId;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
-        String username = credentials.get("username");
-        String password = credentials.get("password");
-        
-        // Tenta pegar sistemaId ou sistema_id
-        String sistemaId = credentials.get("sistemaId");
-        if (sistemaId == null) {
-            sistemaId = credentials.get("sistema_id");
-        }
+    public ResponseEntity<?> login(@RequestBody LoginRequest credentials) {
+        String username = credentials.getUsername();
+        String password = credentials.getPassword();
+        String sistemaId = credentials.getSistemaId();
 
         if (sistemaId == null || username == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username and sistemaId are required.");
