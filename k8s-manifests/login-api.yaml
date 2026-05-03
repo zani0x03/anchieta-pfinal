@@ -49,6 +49,8 @@ spec:
               value: "registration-api-client"
             - name: KEYCLOAK_CLIENT_SECRET
               valueFrom: { secretKeyRef: { name: login-api-secrets, key: keycloak-client-secret } }
+            - name: SERVER_FORWARD_HEADERS_STRATEGY
+              value: "framework"
           ports:
             - containerPort: 8080
           resources:
