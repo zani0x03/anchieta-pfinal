@@ -24,14 +24,22 @@ spec:
           ports:
             - containerPort: 8086
           env:
-            - name: SERVER_PORT
-              value: "8086"
             - name: OLLAMA_URL
               value: "http://ollama.apps-anchieta-mobile-ios.svc.cluster.local:11434/api/generate"
             - name: OLLAMA_MODEL
               value: "qwen3:0.6b"
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
               value: "http://keycloak.infra.svc.cluster.local:8080/realms/anchieta-mobile-ios-realm/protocol/openid-connect/certs"
+            - name: SERVER_PORT
+              value: "8086"
+            - name: SERVER_FORWARD_HEADERS_STRATEGY
+              value: "framework"
+            - name: SERVER_TOMCAT_PROTOCOL_HEADER
+              value: "x-forwarded-proto"
+            - name: SERVER_TOMCAT_REMOTE_IP_HEADER
+              value: "x-forwarded-for"
+            - name: SERVER_TOMCAT_INTERNAL_PROXIES
+              value: ".*"
           resources:
             limits:
               memory: "512Mi"
