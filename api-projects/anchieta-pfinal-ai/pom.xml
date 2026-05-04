@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.anchieta</groupId>
 	<artifactId>anchieta-pfinal-ai</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<name>ai-api</name>
 	<description>AI Middleware API for student chat</description>
 	<properties>
