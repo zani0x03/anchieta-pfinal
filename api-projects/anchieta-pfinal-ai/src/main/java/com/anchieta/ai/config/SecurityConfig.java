@@ -41,7 +41,7 @@ public class SecurityConfig {
                         // Servidor local para desenvolvimento
                         new Server().url("http://localhost:8086"), // Porta da API de IA
                         // Servidor externo via túnel/ingress
-                        new Server().url("https://mobile-ios-ai.zani0x03.eti.br") // Domínio externo da API de IA
+                        new Server().url("https://mobile-ios-ia.zani0x03.eti.br") // Domínio externo da API de IA
                 ));
     }
 
