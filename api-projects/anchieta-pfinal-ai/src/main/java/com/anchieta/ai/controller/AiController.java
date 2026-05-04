@@ -1,6 +1,7 @@
 package com.anchieta.ai.controller;
 
 import com.anchieta.ai.service.AiService;
+import com.anchieta.ai.dto.ChatRequest; // Import do novo DTO
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,8 @@ public class AiController {
     }
 
     @PostMapping("/chat")
-    public ResponseEntity<?> chat(@RequestBody Map<String, String> request) {
-        String prompt = request.get("prompt");
+    public ResponseEntity<?> chat(@RequestBody ChatRequest request) { // Usando o ChatRequest DTO
+        String prompt = request.getPrompt();
         if (prompt == null || prompt.isEmpty()) {
             return ResponseEntity.badRequest().body("Prompt is required");
         }
